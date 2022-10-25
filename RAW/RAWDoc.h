@@ -62,4 +62,8 @@ protected:
 #endif // SHARED_HANDLERS
 public:
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
+	// 기존 화소에 상수 값을 더하는 함수
+	void OnPixelpointprocessingAdd();
+	// 기존 화소에서 상수 값을 빼는 함수
+	void OnPixelpointprocessingSub();
 };

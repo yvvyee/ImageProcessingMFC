@@ -14,6 +14,8 @@
 
 #include <propkey.h>
 
+#include "CInputDialog.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -258,4 +260,52 @@ BOOL CRAWDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 	m_inHistImg = MakeHistImg(m_inImg);
 	return TRUE;
+}
+
+
+// 기존 화소에 상수 값을 더하는 함수
+void CRAWDoc::OnPixelpointprocessingAdd()
+{
+	// TODO: Add your implementation code here.
+	m_outH = m_inH;
+	m_outW = m_inW;
+	m_outSz = m_outH * m_outW;
+	m_outImg = new unsigned char[m_outSz];
+	CInputDialog dlg;
+	if (dlg.DoModal() == IDOK) {
+		int num = (int)dlg.number;
+		for (int i = 0; i < m_inSz; i++) {
+			int val = m_inImg[i] + num;
+			if (val > 255) {
+				// wrapping 방식
+				val = val % 256;
+			}
+			m_outImg[i] = val;
+		}
+		m_outHistImg = MakeHistImg(m_outImg);
+	}
+}
+
+
+// 기존 화소에서 상수 값을 빼는 함수
+void CRAWDoc::OnPixelpointprocessingSub()
+{
+	// TODO: Add your implementation code here.
+	m_outH = m_inH;
+	m_outW = m_inW;
+	m_outSz = m_outH * m_outW;
+	m_outImg = new unsigned char[m_outSz];
+	CInputDialog dlg;
+	if (dlg.DoModal() == IDOK) {
+		int num = (int)dlg.number;
+		for (int i = 0; i < m_inSz; i++) {
+			int val = m_inImg[i] - num;
+			if (val < 0) {
+				// Clamping 방식
+				val = 0;
+			}
+			m_outImg[i] = val;
+		}
+		m_outHistImg = MakeHistImg(m_outImg);
+	}
 }

@@ -29,6 +29,8 @@ BEGIN_MESSAGE_MAP(CRAWView, CView)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CRAWView::OnFilePrintPreview)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
+	ON_COMMAND(ID_PIXELPOINTPROCESSING_ADD, &CRAWView::OnPixelpointprocessingAdd)
+	ON_COMMAND(ID_PIXELPOINTPROCESSING_SUB, &CRAWView::OnPixelpointprocessingSub)
 END_MESSAGE_MAP()
 
 // CRAWView construction/destruction
@@ -191,3 +193,26 @@ CRAWDoc* CRAWView::GetDocument() const // non-debug version is inline
 	return (CRAWDoc*)m_pDocument;
 }
 #endif //_DEBUG
+
+void CRAWView::OnPixelpointprocessingAdd()
+{
+	// TODO: Add your command handler code here
+	CRAWDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	pDoc->OnPixelpointprocessingAdd();
+	Invalidate(TRUE);
+}
+
+
+void CRAWView::OnPixelpointprocessingSub()
+{
+	// TODO: Add your command handler code here
+	CRAWDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	pDoc->OnPixelpointprocessingSub();
+	Invalidate(TRUE);
+}
