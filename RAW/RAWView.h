@@ -17,6 +17,7 @@ public:
 
 // Operations
 public:
+	void ShowRAWImg(CDC& pDC, CRAWDoc* pDoc, bool isOut);
 
 // Overrides
 public:

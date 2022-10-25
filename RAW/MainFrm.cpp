@@ -184,7 +184,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_SORTING_SORTBYACCESS);
 	lstBasicCommands.AddTail(ID_SORTING_GROUPBYTYPE);
 
-	CMFCToolBar::SetBasicCommands(lstBasicCommands);
+	// 추가: 메뉴 숨기기 비활성화를 위해 주석 처리함
+	// CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
 	// Switch the order of document name and application name on the window title bar. This
 	// improves the usability of the taskbar because the document name is visible with the thumbnail.

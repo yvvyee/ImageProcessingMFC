@@ -38,6 +38,70 @@ CRAWDoc::~CRAWDoc()
 {
 }
 
+UCHAR* CRAWDoc::MakeHistImg(UCHAR* img)
+{
+	m_histSz = 256;
+	
+	// 빈도 조사
+	int value;
+	int HIST[256] = { 0, };
+	int img_size = m_inH * m_inW;
+	for (int i = 0; i < img_size; i++)
+	{
+		value = (int)img[i];
+		HIST[value]++;
+	}
+
+	// 최소-최대 정규화
+	double MAX = HIST[0];
+	double MIN = HIST[0];
+	for (int i = 0; i < m_histSz; i++)
+	{
+		if (MIN > HIST[i])
+		{
+			MIN = HIST[i];
+		}
+		if (MAX < HIST[i])
+		{
+			MAX = HIST[i];
+		}
+	}
+	double DIF = MAX - MIN;
+	for (int i = 0; i < m_histSz; i++)
+	{
+		HIST[i] = (unsigned char)
+			((HIST[i] - MIN) / DIF * 255);
+	}
+	// 히스토그램 이미지화
+	int histImgSz = (m_histSz * m_histSz)
+		+ (m_histSz * 20);
+	UCHAR* histoImg = new UCHAR[histImgSz];
+
+	// 흰색으로 초기화
+	for (int i = 0; i < histImgSz; i++)
+	{
+		histoImg[i] = 255;
+	}
+
+	// 히스토그램 막대부분만 검은색 칠함
+	for (int i = 0; i < m_histSz; i++)
+	{
+		for (int j = 0; j < HIST[i]; j++)
+		{
+			histoImg[m_histSz * (m_histSz - j - 1) + i] = 0;
+		}
+	}
+	// 히스토그램 하단 막대 표시
+	for (int i = m_histSz + 5; i < m_histSz + 20; i++)
+	{
+		for (int j = 0; j < m_histSz; j++)
+		{
+			histoImg[m_histSz * i + j] = j;
+		}
+	}
+	return histoImg;
+}
+
 BOOL CRAWDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
@@ -136,3 +200,62 @@ void CRAWDoc::Dump(CDumpContext& dc) const
 
 
 // CRAWDoc commands
+
+
+BOOL CRAWDoc::OnOpenDocument(LPCTSTR lpszPathName)
+{
+	if (!CDocument::OnOpenDocument(lpszPathName))
+		return FALSE;
+
+	// TODO:  Add your specialized creation code here
+	CFile File;
+	File.Open(lpszPathName, CFile::modeRead | CFile::typeBinary);
+
+	if (File.GetLength() == 32 * 32) {
+		m_inH = 32;
+		m_inW = 32;
+	}
+	else if (File.GetLength() == 64 * 64) {
+		m_inH = 64;
+		m_inW = 64;
+	}
+	else if (File.GetLength() == 128 * 128) {
+		m_inH = 128;
+		m_inW = 128;
+	}
+	else if (File.GetLength() == 256 * 256) {
+		m_inH = 256;
+		m_inW = 256;
+	}
+	else if (File.GetLength() == 512 * 512) {
+		m_inH = 512;
+		m_inW = 512;
+	}
+	else if (File.GetLength() == 640 * 480) {
+		m_inH = 480;
+		m_inW = 640;
+	}
+	else if (File.GetLength() == 176 * 144) {
+		m_inH = 144;
+		m_inW = 176;
+	}
+	else if (File.GetLength() == 176 * 216) {
+		m_inH = 216;
+		m_inW = 176;
+	}
+	else {
+		AfxMessageBox(L"Not Support Size", MB_OK | MB_ICONEXCLAMATION);
+		return 0;
+	}
+	m_inSz = m_inW * m_inH;
+	m_inImg = new UCHAR[m_inSz];
+
+	for (int i = 0; i < m_inSz; i++) {
+		m_inImg[i] = 255;
+	}
+	File.Read(m_inImg, m_inSz);
+	File.Close();
+
+	m_inHistImg = MakeHistImg(m_inImg);
+	return TRUE;
+}

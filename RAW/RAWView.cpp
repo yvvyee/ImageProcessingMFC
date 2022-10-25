@@ -53,7 +53,51 @@ BOOL CRAWView::PreCreateWindow(CREATESTRUCT& cs)
 
 // CRAWView drawing
 
-void CRAWView::OnDraw(CDC* /*pDC*/)
+void CRAWView::ShowRAWImg(CDC& pDC, CRAWDoc* pDoc, bool isOut)
+{
+	int height = pDoc->m_inH;
+	int width = pDoc->m_inW;
+	int histSize = pDoc->m_histSz;
+	UCHAR* rawImg = pDoc->m_inImg;
+	UCHAR* histImg = pDoc->m_inHistImg;
+
+	int img_i = 5;
+	int img_j = 5;
+	int hist_i = 5;
+	int hist_j = 5 + 5 + width;
+
+	// 출력 이미지인 경우 변수 변경
+	if (isOut)
+	{
+		height = pDoc->m_outH;
+		width = pDoc->m_outW;
+		rawImg = pDoc->m_outImg;
+		histImg = pDoc->m_outHistImg;
+
+		img_i = 5 + 5 + height;
+		img_j = 5;
+		hist_i = 5 + 5 + height;
+		hist_j = 5 + 5 + width;
+	}
+
+	UCHAR R, G, B;
+	// 이미지 화면에 출력
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			R = G = B = rawImg[i * width + j];
+			pDC.SetPixel(j + img_j, i + img_i, RGB(R, G, B));
+		}
+	}
+	// 히스토그램 화면 출력
+	for (int i = 0; i < histSize + 20; i++) {
+		for (int j = 0; j < histSize; j++) {
+			R = G = B = histImg[i * histSize + j];
+			pDC.SetPixel(j + hist_j, i + hist_i, RGB(R, G, B));
+		}
+	}
+}
+
+void CRAWView::OnDraw(CDC* pDC)
 {
 	CRAWDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
@@ -61,6 +105,30 @@ void CRAWView::OnDraw(CDC* /*pDC*/)
 		return;
 
 	// TODO: add draw code for native data here
+	CRect viewRect;
+	CDC memDC;
+	CBitmap bit;
+
+	GetClientRect(viewRect);
+
+	int height = viewRect.Height();
+	int width = viewRect.Width();
+
+	memDC.CreateCompatibleDC(pDC);
+	bit.CreateCompatibleBitmap(pDC, width, height);
+	memDC.SelectObject(&bit);
+	memDC.Rectangle(0, 0, width, height);
+
+	if (pDoc->m_inSz != 0) {
+		this->ShowRAWImg(memDC, pDoc, false);
+	}
+	if (pDoc->m_outSz != 0) {
+		this->ShowRAWImg(memDC, pDoc, true);
+	}
+
+	pDC->BitBlt(0, 0, width, height, &memDC, 0, 0, SRCCOPY);
+	memDC.DeleteDC();
+	bit.DeleteObject();
 }
 
 
@@ -123,6 +191,3 @@ CRAWDoc* CRAWView::GetDocument() const // non-debug version is inline
 	return (CRAWDoc*)m_pDocument;
 }
 #endif //_DEBUG
-
-
-// CRAWView message handlers
