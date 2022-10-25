@@ -309,3 +309,139 @@ void CRAWDoc::OnPixelpointprocessingSub()
 		m_outHistImg = MakeHistImg(m_outImg);
 	}
 }
+
+
+// 화소 반전 함수
+void CRAWDoc::OnPixelpointprocessingInverse()
+{
+	// TODO: Add your implementation code here.
+	m_outH = m_inH;
+	m_outW = m_inW;
+	m_outSz = m_outH * m_outW;
+	m_outImg = new unsigned char[m_outSz];
+
+	for (int i = 0; i < m_inSz; i++) {
+		m_outImg[i] = 255 - m_inImg[i];
+	}
+	m_outHistImg = MakeHistImg(m_outImg);
+
+}
+
+
+// 화소 이진화 함수
+void CRAWDoc::OnPixelpointprocessingBinarization()
+{
+	// TODO: Add your implementation code here.
+	m_outH = m_inH;
+	m_outW = m_inW;
+	m_outSz = m_outH * m_outW;
+	m_outImg = new unsigned char[m_outSz];
+	CInputDialog dlg;
+	if (dlg.DoModal() == IDOK) {
+		int threshold = (int)dlg.number;
+		for (int i = 0; i < m_inSz; i++) {
+			int val = m_inImg[i];
+			if (val < threshold) {
+				m_outImg[i] = 0;
+			}
+			else {
+				m_outImg[i] = 255;
+			}
+		}
+		m_outHistImg = MakeHistImg(m_outImg);
+	}
+}
+
+
+// 로그 변환 함수
+void CRAWDoc::OnPixelpointprocessingLogtransform()
+{
+	// TODO: Add your implementation code here.
+	m_outH = m_inH;
+	m_outW = m_inW;
+	m_outSz = m_outH * m_outW;
+	m_outImg = new unsigned char[m_outSz];
+
+	CInputDialog dlg;
+	if (dlg.DoModal() == IDOK) {
+		double cons = dlg.number;
+		for (int i = 0; i < m_inSz; i++) {
+			double scaled_val = m_inImg[i] / 255.;
+			int val = cons * log(1 + scaled_val) * (255 / log(256));
+			if (val < 0) { m_outImg[i] = 0; }
+			else if (val > 255) { m_outImg[i] = 255; }
+			else { m_outImg[i] = val; }
+		}
+		m_outHistImg = MakeHistImg(m_outImg);
+	}
+}
+
+
+// 감마 보정 함수
+void CRAWDoc::OnPixelpointprocessingGammacorrection()
+{
+	// TODO: Add your implementation code here.
+	m_outH = m_inH;
+	m_outW = m_inW;
+	m_outSz = m_outH * m_outW;
+	m_outImg = new unsigned char[m_outSz];
+
+	CInputDialog dlg;
+	if (dlg.DoModal() == IDOK) {
+		double gamma = dlg.number;
+		for (int i = 0; i < m_inSz; i++) {
+			double scaled_val = m_inImg[i] / 255.;
+			int val = pow(scaled_val, 1. / gamma) * 255;
+			if (val < 0) { m_outImg[i] = 0; }
+			else if (val > 255) { m_outImg[i] = 255; }
+			else { m_outImg[i] = val; }
+		}
+		m_outHistImg = MakeHistImg(m_outImg);
+	}
+
+}
+
+
+// 포스터라이제이션 함수
+void CRAWDoc::OnPixelpointprocessingPosterization()
+{
+	// TODO: Add your implementation code here.
+	m_outH = m_inH;
+	m_outW = m_inW;
+	m_outSz = m_outH * m_outW;
+	m_outImg = new unsigned char[m_outSz];
+
+	CInputDialog dlg;
+	if (dlg.DoModal() == IDOK) {
+		int div = 256 / (int)dlg.number;
+		for (int i = 0; i < m_inSz; i++) {
+			m_outImg[i] = m_inImg[i] / div * div + div / 2;
+		}
+		m_outHistImg = MakeHistImg(m_outImg);
+	}
+}
+
+
+// 비트 평면 분할 함수
+void CRAWDoc::OnPixelpointprocessingBitplaneslicing()
+{
+	// TODO: Add your implementation code here.
+	m_outH = m_inH;
+	m_outW = m_inW;
+	m_outSz = m_outH * m_outW;
+	m_outImg = new unsigned char[m_outSz];
+
+	CInputDialog dlg;
+	if (dlg.DoModal() == IDOK) {
+		int pos = (int)dlg.number - 1;
+		UCHAR mask = 0x01 << pos;
+		for (int i = 0; i < m_inSz; i++) {
+			UCHAR val = m_inImg[i];
+			if ((val & mask) == pow(2, pos)) {
+				m_outImg[i] = 255;
+			}
+			else { m_outImg[i] = 0; }
+		}
+		m_outHistImg = MakeHistImg(m_outImg);
+	}
+}

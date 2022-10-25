@@ -66,4 +66,16 @@ public:
 	void OnPixelpointprocessingAdd();
 	// 기존 화소에서 상수 값을 빼는 함수
 	void OnPixelpointprocessingSub();
+	// 화소 반전 함수
+	void OnPixelpointprocessingInverse();
+	// 화소 이진화 함수
+	void OnPixelpointprocessingBinarization();
+	// 로그 변환 함수
+	void OnPixelpointprocessingLogtransform();
+	// 감마 보정 함수
+	void OnPixelpointprocessingGammacorrection();
+	// 포스터라이제이션 함수
+	void OnPixelpointprocessingPosterization();
+	// 비트 평면 분할 함수
+	void OnPixelpointprocessingBitplaneslicing();
 };

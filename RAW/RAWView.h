@@ -47,6 +47,12 @@ protected:
 public:
 	afx_msg void OnPixelpointprocessingAdd();
 	afx_msg void OnPixelpointprocessingSub();
+	afx_msg void OnPixelpointprocessingInverse();
+	afx_msg void OnPixelpointprocessingBinarization();
+	afx_msg void OnPixelpointprocessingLogtransform();
+	afx_msg void OnPixelpointprocessingGammacorrection();
+	afx_msg void OnPixelpointprocessingPosterization();
+	afx_msg void OnPixelpointprocessingBitplaneslicing();
 };
 
 #ifndef _DEBUG  // debug version in RAWView.cpp

@@ -31,6 +31,12 @@ BEGIN_MESSAGE_MAP(CRAWView, CView)
 	ON_WM_RBUTTONUP()
 	ON_COMMAND(ID_PIXELPOINTPROCESSING_ADD, &CRAWView::OnPixelpointprocessingAdd)
 	ON_COMMAND(ID_PIXELPOINTPROCESSING_SUB, &CRAWView::OnPixelpointprocessingSub)
+	ON_COMMAND(ID_PIXELPOINTPROCESSING_INVERSE, &CRAWView::OnPixelpointprocessingInverse)
+	ON_COMMAND(ID_PIXELPOINTPROCESSING_BINARIZATION, &CRAWView::OnPixelpointprocessingBinarization)
+	ON_COMMAND(ID_PIXELPOINTPROCESSING_LOGTRANSFORM, &CRAWView::OnPixelpointprocessingLogtransform)
+	ON_COMMAND(ID_PIXELPOINTPROCESSING_GAMMACORRECTION, &CRAWView::OnPixelpointprocessingGammacorrection)
+	ON_COMMAND(ID_PIXELPOINTPROCESSING_POSTERIZATION, &CRAWView::OnPixelpointprocessingPosterization)
+	ON_COMMAND(ID_PIXELPOINTPROCESSING_BITPLANESLICING, &CRAWView::OnPixelpointprocessingBitplaneslicing)
 END_MESSAGE_MAP()
 
 // CRAWView construction/destruction
@@ -76,9 +82,9 @@ void CRAWView::ShowRAWImg(CDC& pDC, CRAWDoc* pDoc, bool isOut)
 		rawImg = pDoc->m_outImg;
 		histImg = pDoc->m_outHistImg;
 
-		img_i = 5 + 5 + height;
+		img_i = 5 + 25 + height;
 		img_j = 5;
-		hist_i = 5 + 5 + height;
+		hist_i = 5 + 25 + height;
 		hist_j = 5 + 5 + width;
 	}
 
@@ -214,5 +220,77 @@ void CRAWView::OnPixelpointprocessingSub()
 	if (!pDoc)
 		return;
 	pDoc->OnPixelpointprocessingSub();
+	Invalidate(TRUE);
+}
+
+
+void CRAWView::OnPixelpointprocessingInverse()
+{
+	// TODO: Add your command handler code here
+	CRAWDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	pDoc->OnPixelpointprocessingInverse();
+	Invalidate(TRUE);
+}
+
+
+void CRAWView::OnPixelpointprocessingBinarization()
+{
+	// TODO: Add your command handler code here
+	CRAWDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	pDoc->OnPixelpointprocessingBinarization();
+	Invalidate(TRUE);
+}
+
+
+void CRAWView::OnPixelpointprocessingLogtransform()
+{
+	// TODO: Add your command handler code here
+	CRAWDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	pDoc->OnPixelpointprocessingLogtransform();
+	Invalidate(TRUE);
+}
+
+
+void CRAWView::OnPixelpointprocessingGammacorrection()
+{
+	// TODO: Add your command handler code here
+	CRAWDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	pDoc->OnPixelpointprocessingGammacorrection();
+	Invalidate(TRUE);
+}
+
+
+void CRAWView::OnPixelpointprocessingPosterization()
+{
+	// TODO: Add your command handler code here
+	CRAWDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	pDoc->OnPixelpointprocessingPosterization();
+	Invalidate(TRUE);
+}
+
+
+void CRAWView::OnPixelpointprocessingBitplaneslicing()
+{
+	// TODO: Add your command handler code here
+	CRAWDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	pDoc->OnPixelpointprocessingBitplaneslicing();
 	Invalidate(TRUE);
 }
