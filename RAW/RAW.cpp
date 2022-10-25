@@ -141,7 +141,7 @@ BOOL CRAWApp::InitInstance()
 	CCommandLineInfo cmdInfo;
 	ParseCommandLine(cmdInfo);
 
-	// Ãß°¡: ÇÁ·Î±×·¥ ½ÃÀÛ ½Ã ºó Ã¢À» ¶ç¿ìÁö ¾Ê´Â´Ù
+	// ì¶”ê°€: í”„ë¡œê·¸ë¨ ì‹œì‘ ì‹œ ë¹ˆ ì°½ì„ ë„ìš°ì§€ ì•ŠëŠ”ë‹¤
 	if (cmdInfo.m_nShellCommand == CCommandLineInfo::FileNew)
 		cmdInfo.m_nShellCommand = CCommandLineInfo::FileNothing;
 

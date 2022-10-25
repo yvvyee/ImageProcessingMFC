@@ -53,6 +53,7 @@ public:
 	afx_msg void OnPixelpointprocessingGammacorrection();
 	afx_msg void OnPixelpointprocessingPosterization();
 	afx_msg void OnPixelpointprocessingBitplaneslicing();
+	afx_msg void OnPixelpointprocessingContraststretching();
 };
 
 #ifndef _DEBUG  // debug version in RAWView.cpp

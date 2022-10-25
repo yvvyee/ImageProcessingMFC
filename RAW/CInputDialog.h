@@ -22,6 +22,16 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	// ´ÙÀÌ¾ó·Î±×¿¡¼­ ÀÔ·Â¹ŞÀº ¼ıÀÚ
-	double number;
+	double GetNum() {
+		return m_num;
+	}
+	void SetStr(CString str) {
+		m_str = str;
+	}
+private:
+	double m_num; // ë‹¤ì´ì–¼ë¡œê·¸ì—ì„œ ì…ë ¥ë°›ì€ ìˆ«ì
+	CStatic m_cap; // ìº¡ì…˜
+	CString m_str;
+public:
+	virtual BOOL OnInitDialog();
 };

@@ -14,24 +14,25 @@ protected: // create from serialization only
 
 // Attributes
 public:
-	int m_inH = 0;		// ÀÔ·Â RAW ÀÌ¹ÌÁöÀÇ ¼¼·Î Å©±â
-	int m_inW = 0;		// ÀÔ·Â RAW ÀÌ¹ÌÁöÀÇ °¡·Î Å©±â
-	int m_inSz = 0;		// ÀÔ·Â RAW ÀÌ¹ÌÁöÀÇ ÀüÃ¼ Å©±â
+	int m_inH = 0;		// ì…ë ¥ RAW ì´ë¯¸ì§€ì˜ ì„¸ë¡œ í¬ê¸°
+	int m_inW = 0;		// ì…ë ¥ RAW ì´ë¯¸ì§€ì˜ ê°€ë¡œ í¬ê¸°
+	int m_inSz = 0;		// ì…ë ¥ RAW ì´ë¯¸ì§€ì˜ ì „ì²´ í¬ê¸°
 
-	int m_outH = 0;		// °á°ú RAW ÀÌ¹ÌÁöÀÇ ¼¼·Î Å©±â
-	int m_outW = 0;		// °á°ú RAW ÀÌ¹ÌÁöÀÇ °¡·Î Å©±â
-	int m_outSz = 0;	// °á°ú RAW ÀÌ¹ÌÁöÀÇ ÀüÃ¼ Å©±â
+	int m_outH = 0;		// ê²°ê³¼ RAW ì´ë¯¸ì§€ì˜ ì„¸ë¡œ í¬ê¸°
+	int m_outW = 0;		// ê²°ê³¼ RAW ì´ë¯¸ì§€ì˜ ê°€ë¡œ í¬ê¸°
+	int m_outSz = 0;	// ê²°ê³¼ RAW ì´ë¯¸ì§€ì˜ ì „ì²´ í¬ê¸°
 
-	int m_histSz = 0;	// È÷½ºÅä±×·¥ Å©±â
+	int m_inHistSz = 0;	// íˆìŠ¤í† ê·¸ë¨ í¬ê¸°
+	int m_outHistSz = 0;	// íˆìŠ¤í† ê·¸ë¨ í¬ê¸°
 
-	UCHAR* m_inImg;			// ÀÔ·Â RAW ÀÌ¹ÌÁö ¹öÆÛ
-	UCHAR* m_outImg;		// °á°ú RAW ÀÌ¹ÌÁö ¹öÆÛ
-	UCHAR* m_inHistImg;		// ÀÔ·Â ÀÌ¹ÌÁöÀÇ È÷½ºÅä±×·¥ ÀÌ¹ÌÁö ¹öÆÛ
-	UCHAR* m_outHistImg;	// °á°ú ÀÌ¹ÌÁöÀÇ È÷½ºÅä±×·¥ ÀÌ¹ÌÁö ¹öÆÛ
+	UCHAR* m_inImg;			// ì…ë ¥ RAW ì´ë¯¸ì§€ ë²„í¼
+	UCHAR* m_outImg;		// ê²°ê³¼ RAW ì´ë¯¸ì§€ ë²„í¼
+	UCHAR* m_inHistImg;		// ì…ë ¥ ì´ë¯¸ì§€ì˜ íˆìŠ¤í† ê·¸ë¨ ì´ë¯¸ì§€ ë²„í¼
+	UCHAR* m_outHistImg;	// ê²°ê³¼ ì´ë¯¸ì§€ì˜ íˆìŠ¤í† ê·¸ë¨ ì´ë¯¸ì§€ ë²„í¼
 
 // Operations
 public:
-	UCHAR* MakeHistImg(UCHAR* img);	// È÷½ºÅä±×·¥ ÀÌ¹ÌÁö¸¦ »ı¼ºÇÏ´Â ÇÔ¼ö
+	UCHAR* MakeHistImg(UCHAR* img, bool isOut = true);	// íˆìŠ¤í† ê·¸ë¨ ì´ë¯¸ì§€ë¥¼ ìƒì„±í•˜ëŠ” í•¨ìˆ˜
 
 // Overrides
 public:
@@ -62,20 +63,22 @@ protected:
 #endif // SHARED_HANDLERS
 public:
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
-	// ±âÁ¸ È­¼Ò¿¡ »ó¼ö °ªÀ» ´õÇÏ´Â ÇÔ¼ö
+	// ê¸°ì¡´ í™”ì†Œì— ìƒìˆ˜ ê°’ì„ ë”í•˜ëŠ” í•¨ìˆ˜
 	void OnPixelpointprocessingAdd();
-	// ±âÁ¸ È­¼Ò¿¡¼­ »ó¼ö °ªÀ» »©´Â ÇÔ¼ö
+	// ê¸°ì¡´ í™”ì†Œì—ì„œ ìƒìˆ˜ ê°’ì„ ë¹¼ëŠ” í•¨ìˆ˜
 	void OnPixelpointprocessingSub();
-	// È­¼Ò ¹İÀü ÇÔ¼ö
+	// í™”ì†Œ ë°˜ì „ í•¨ìˆ˜
 	void OnPixelpointprocessingInverse();
-	// È­¼Ò ÀÌÁøÈ­ ÇÔ¼ö
+	// í™”ì†Œ ì´ì§„í™” í•¨ìˆ˜
 	void OnPixelpointprocessingBinarization();
-	// ·Î±× º¯È¯ ÇÔ¼ö
+	// ë¡œê·¸ ë³€í™˜ í•¨ìˆ˜
 	void OnPixelpointprocessingLogtransform();
-	// °¨¸¶ º¸Á¤ ÇÔ¼ö
+	// ê°ë§ˆ ë³´ì • í•¨ìˆ˜
 	void OnPixelpointprocessingGammacorrection();
-	// Æ÷½ºÅÍ¶óÀÌÁ¦ÀÌ¼Ç ÇÔ¼ö
+	// í¬ìŠ¤í„°ë¼ì´ì œì´ì…˜ í•¨ìˆ˜
 	void OnPixelpointprocessingPosterization();
-	// ºñÆ® Æò¸é ºĞÇÒ ÇÔ¼ö
+	// ë¹„íŠ¸ í‰ë©´ ë¶„í•  í•¨ìˆ˜
 	void OnPixelpointprocessingBitplaneslicing();
+	// ë¹„ì„ í˜• ëª…ì•” ëŒ€ë¹„ ë³€í™˜ í•¨ìˆ˜
+	void OnPixelpointprocessingContraststretching();
 };

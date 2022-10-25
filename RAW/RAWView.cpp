@@ -37,6 +37,7 @@ BEGIN_MESSAGE_MAP(CRAWView, CView)
 	ON_COMMAND(ID_PIXELPOINTPROCESSING_GAMMACORRECTION, &CRAWView::OnPixelpointprocessingGammacorrection)
 	ON_COMMAND(ID_PIXELPOINTPROCESSING_POSTERIZATION, &CRAWView::OnPixelpointprocessingPosterization)
 	ON_COMMAND(ID_PIXELPOINTPROCESSING_BITPLANESLICING, &CRAWView::OnPixelpointprocessingBitplaneslicing)
+	ON_COMMAND(ID_PIXELPOINTPROCESSING_CONTRASTSTRETCHING, &CRAWView::OnPixelpointprocessingContraststretching)
 END_MESSAGE_MAP()
 
 // CRAWView construction/destruction
@@ -65,38 +66,41 @@ void CRAWView::ShowRAWImg(CDC& pDC, CRAWDoc* pDoc, bool isOut)
 {
 	int height = pDoc->m_inH;
 	int width = pDoc->m_inW;
-	int histSize = pDoc->m_histSz;
-	UCHAR* rawImg = pDoc->m_inImg;
-	UCHAR* histImg = pDoc->m_inHistImg;
+	int histSize = pDoc->m_inHistSz;
 
 	int img_i = 5;
 	int img_j = 5;
 	int hist_i = 5;
 	int hist_j = 5 + 5 + width;
 
-	// Ãâ·Â ÀÌ¹ÌÁöÀÎ °æ¿ì º¯¼ö º¯°æ
+	UCHAR* rawImg = pDoc->m_inImg;
+	UCHAR* histImg = pDoc->m_inHistImg;
+
+	// ì¶œë ¥ ì´ë¯¸ì§€ì¸ ê²½ìš° ë³€ìˆ˜ ë³€ê²½
 	if (isOut)
 	{
 		height = pDoc->m_outH;
 		width = pDoc->m_outW;
-		rawImg = pDoc->m_outImg;
-		histImg = pDoc->m_outHistImg;
+		histSize = pDoc->m_outHistSz;
 
 		img_i = 5 + 25 + height;
 		img_j = 5;
 		hist_i = 5 + 25 + height;
 		hist_j = 5 + 5 + width;
+
+		rawImg = pDoc->m_outImg;
+		histImg = pDoc->m_outHistImg;
 	}
 
 	UCHAR R, G, B;
-	// ÀÌ¹ÌÁö È­¸é¿¡ Ãâ·Â
+	// ì´ë¯¸ì§€ í™”ë©´ì— ì¶œë ¥
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
 			R = G = B = rawImg[i * width + j];
 			pDC.SetPixel(j + img_j, i + img_i, RGB(R, G, B));
 		}
 	}
-	// È÷½ºÅä±×·¥ È­¸é Ãâ·Â
+	// íˆìŠ¤í† ê·¸ë¨ í™”ë©´ ì¶œë ¥
 	for (int i = 0; i < histSize + 20; i++) {
 		for (int j = 0; j < histSize; j++) {
 			R = G = B = histImg[i * histSize + j];
@@ -292,5 +296,17 @@ void CRAWView::OnPixelpointprocessingBitplaneslicing()
 	if (!pDoc)
 		return;
 	pDoc->OnPixelpointprocessingBitplaneslicing();
+	Invalidate(TRUE);
+}
+
+
+void CRAWView::OnPixelpointprocessingContraststretching()
+{
+	// TODO: Add your command handler code here
+	CRAWDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	pDoc->OnPixelpointprocessingContraststretching();
 	Invalidate(TRUE);
 }

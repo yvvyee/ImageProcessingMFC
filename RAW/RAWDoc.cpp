@@ -40,11 +40,17 @@ CRAWDoc::~CRAWDoc()
 {
 }
 
-UCHAR* CRAWDoc::MakeHistImg(UCHAR* img)
+UCHAR* CRAWDoc::MakeHistImg(UCHAR* img, bool isOut)
 {
-	m_histSz = 256;
+	int histSz = 256;
+	if (isOut) {
+		m_outHistSz = histSz;
+	}
+	else {
+		m_inHistSz = histSz;
+	}
 	
-	// ºóµµ Á¶»ç
+	// ë¹ˆë„ ì¡°ì‚¬
 	int value;
 	int HIST[256] = { 0, };
 	int img_size = m_inH * m_inW;
@@ -54,10 +60,10 @@ UCHAR* CRAWDoc::MakeHistImg(UCHAR* img)
 		HIST[value]++;
 	}
 
-	// ÃÖ¼Ò-ÃÖ´ë Á¤±ÔÈ­
+	// ìµœì†Œ-ìµœëŒ€ ì •ê·œí™”
 	double MAX = HIST[0];
 	double MIN = HIST[0];
-	for (int i = 0; i < m_histSz; i++)
+	for (int i = 0; i < histSz; i++)
 	{
 		if (MIN > HIST[i])
 		{
@@ -69,36 +75,36 @@ UCHAR* CRAWDoc::MakeHistImg(UCHAR* img)
 		}
 	}
 	double DIF = MAX - MIN;
-	for (int i = 0; i < m_histSz; i++)
+	for (int i = 0; i < histSz; i++)
 	{
 		HIST[i] = (unsigned char)
 			((HIST[i] - MIN) / DIF * 255);
 	}
-	// È÷½ºÅä±×·¥ ÀÌ¹ÌÁöÈ­
-	int histImgSz = (m_histSz * m_histSz)
-		+ (m_histSz * 20);
+	// íˆìŠ¤í† ê·¸ë¨ ì´ë¯¸ì§€í™”
+	int histImgSz = (histSz * histSz)
+		+ (histSz * 20);
 	UCHAR* histoImg = new UCHAR[histImgSz];
 
-	// Èò»öÀ¸·Î ÃÊ±âÈ­
+	// í°ìƒ‰ìœ¼ë¡œ ì´ˆê¸°í™”
 	for (int i = 0; i < histImgSz; i++)
 	{
 		histoImg[i] = 255;
 	}
 
-	// È÷½ºÅä±×·¥ ¸·´ëºÎºĞ¸¸ °ËÀº»ö Ä¥ÇÔ
-	for (int i = 0; i < m_histSz; i++)
+	// íˆìŠ¤í† ê·¸ë¨ ë§‰ëŒ€ë¶€ë¶„ë§Œ ê²€ì€ìƒ‰ ì¹ í•¨
+	for (int i = 0; i < histSz; i++)
 	{
 		for (int j = 0; j < HIST[i]; j++)
 		{
-			histoImg[m_histSz * (m_histSz - j - 1) + i] = 0;
+			histoImg[histSz * (histSz - j - 1) + i] = 0;
 		}
 	}
-	// È÷½ºÅä±×·¥ ÇÏ´Ü ¸·´ë Ç¥½Ã
-	for (int i = m_histSz + 5; i < m_histSz + 20; i++)
+	// íˆìŠ¤í† ê·¸ë¨ í•˜ë‹¨ ë§‰ëŒ€ í‘œì‹œ
+	for (int i = histSz + 5; i < histSz + 20; i++)
 	{
-		for (int j = 0; j < m_histSz; j++)
+		for (int j = 0; j < histSz; j++)
 		{
-			histoImg[m_histSz * i + j] = j;
+			histoImg[histSz * i + j] = j;
 		}
 	}
 	return histoImg;
@@ -258,26 +264,26 @@ BOOL CRAWDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	File.Read(m_inImg, m_inSz);
 	File.Close();
 
-	m_inHistImg = MakeHistImg(m_inImg);
+	m_inHistImg = MakeHistImg(m_inImg, false);
 	return TRUE;
 }
 
 
-// ±âÁ¸ È­¼Ò¿¡ »ó¼ö °ªÀ» ´õÇÏ´Â ÇÔ¼ö
+// ê¸°ì¡´ í™”ì†Œì— ìƒìˆ˜ ê°’ì„ ë”í•˜ëŠ” í•¨ìˆ˜
 void CRAWDoc::OnPixelpointprocessingAdd()
 {
 	// TODO: Add your implementation code here.
 	m_outH = m_inH;
 	m_outW = m_inW;
 	m_outSz = m_outH * m_outW;
-	m_outImg = new unsigned char[m_outSz];
+	m_outImg = new UCHAR[m_outSz];
 	CInputDialog dlg;
 	if (dlg.DoModal() == IDOK) {
-		int num = (int)dlg.number;
+		int num = (int)dlg.GetNum();
 		for (int i = 0; i < m_inSz; i++) {
 			int val = m_inImg[i] + num;
 			if (val > 255) {
-				// wrapping ¹æ½Ä
+				// wrapping ë°©ì‹
 				val = val % 256;
 			}
 			m_outImg[i] = val;
@@ -287,21 +293,23 @@ void CRAWDoc::OnPixelpointprocessingAdd()
 }
 
 
-// ±âÁ¸ È­¼Ò¿¡¼­ »ó¼ö °ªÀ» »©´Â ÇÔ¼ö
+// ê¸°ì¡´ í™”ì†Œì—ì„œ ìƒìˆ˜ ê°’ì„ ë¹¼ëŠ” í•¨ìˆ˜
 void CRAWDoc::OnPixelpointprocessingSub()
 {
 	// TODO: Add your implementation code here.
-	m_outH = m_inH;
-	m_outW = m_inW;
-	m_outSz = m_outH * m_outW;
-	m_outImg = new unsigned char[m_outSz];
 	CInputDialog dlg;
-	if (dlg.DoModal() == IDOK) {
-		int num = (int)dlg.number;
+	if (dlg.DoModal() == IDOK) 
+	{
+		m_outH = m_inH;
+		m_outW = m_inW;
+		m_outSz = m_outH * m_outW;
+		m_outImg = new UCHAR[m_outSz];
+
+		int num = (int)dlg.GetNum();
 		for (int i = 0; i < m_inSz; i++) {
 			int val = m_inImg[i] - num;
 			if (val < 0) {
-				// Clamping ¹æ½Ä
+				// Clamping ë°©ì‹
 				val = 0;
 			}
 			m_outImg[i] = val;
@@ -311,14 +319,14 @@ void CRAWDoc::OnPixelpointprocessingSub()
 }
 
 
-// È­¼Ò ¹İÀü ÇÔ¼ö
+// í™”ì†Œ ë°˜ì „ í•¨ìˆ˜
 void CRAWDoc::OnPixelpointprocessingInverse()
 {
 	// TODO: Add your implementation code here.
 	m_outH = m_inH;
 	m_outW = m_inW;
 	m_outSz = m_outH * m_outW;
-	m_outImg = new unsigned char[m_outSz];
+	m_outImg = new UCHAR[m_outSz];
 
 	for (int i = 0; i < m_inSz; i++) {
 		m_outImg[i] = 255 - m_inImg[i];
@@ -328,17 +336,19 @@ void CRAWDoc::OnPixelpointprocessingInverse()
 }
 
 
-// È­¼Ò ÀÌÁøÈ­ ÇÔ¼ö
+// í™”ì†Œ ì´ì§„í™” í•¨ìˆ˜
 void CRAWDoc::OnPixelpointprocessingBinarization()
 {
 	// TODO: Add your implementation code here.
-	m_outH = m_inH;
-	m_outW = m_inW;
-	m_outSz = m_outH * m_outW;
-	m_outImg = new unsigned char[m_outSz];
 	CInputDialog dlg;
+	dlg.SetStr(L"Threshold ê°’ :");
 	if (dlg.DoModal() == IDOK) {
-		int threshold = (int)dlg.number;
+		m_outH = m_inH;
+		m_outW = m_inW;
+		m_outSz = m_outH * m_outW;
+		m_outImg = new UCHAR[m_outSz];
+
+		int threshold = (int)dlg.GetNum();
 		for (int i = 0; i < m_inSz; i++) {
 			int val = m_inImg[i];
 			if (val < threshold) {
@@ -353,18 +363,19 @@ void CRAWDoc::OnPixelpointprocessingBinarization()
 }
 
 
-// ·Î±× º¯È¯ ÇÔ¼ö
+// ë¡œê·¸ ë³€í™˜ í•¨ìˆ˜
 void CRAWDoc::OnPixelpointprocessingLogtransform()
 {
 	// TODO: Add your implementation code here.
-	m_outH = m_inH;
-	m_outW = m_inW;
-	m_outSz = m_outH * m_outW;
-	m_outImg = new unsigned char[m_outSz];
-
 	CInputDialog dlg;
+	dlg.SetStr(L"ìƒìˆ˜ ê°’ :");
 	if (dlg.DoModal() == IDOK) {
-		double cons = dlg.number;
+		m_outH = m_inH;
+		m_outW = m_inW;
+		m_outSz = m_outH * m_outW;
+		m_outImg = new UCHAR[m_outSz];
+
+		double cons = dlg.GetNum();
 		for (int i = 0; i < m_inSz; i++) {
 			double scaled_val = m_inImg[i] / 255.;
 			int val = cons * log(1 + scaled_val) * (255 / log(256));
@@ -377,18 +388,19 @@ void CRAWDoc::OnPixelpointprocessingLogtransform()
 }
 
 
-// °¨¸¶ º¸Á¤ ÇÔ¼ö
+// ê°ë§ˆ ë³´ì • í•¨ìˆ˜
 void CRAWDoc::OnPixelpointprocessingGammacorrection()
 {
 	// TODO: Add your implementation code here.
-	m_outH = m_inH;
-	m_outW = m_inW;
-	m_outSz = m_outH * m_outW;
-	m_outImg = new unsigned char[m_outSz];
-
 	CInputDialog dlg;
+	dlg.SetStr(L"ê°ë§ˆ ê°’ :");
 	if (dlg.DoModal() == IDOK) {
-		double gamma = dlg.number;
+		m_outH = m_inH;
+		m_outW = m_inW;
+		m_outSz = m_outH * m_outW;
+		m_outImg = new UCHAR[m_outSz];
+
+		double gamma = dlg.GetNum();
 		for (int i = 0; i < m_inSz; i++) {
 			double scaled_val = m_inImg[i] / 255.;
 			int val = pow(scaled_val, 1. / gamma) * 255;
@@ -402,18 +414,19 @@ void CRAWDoc::OnPixelpointprocessingGammacorrection()
 }
 
 
-// Æ÷½ºÅÍ¶óÀÌÁ¦ÀÌ¼Ç ÇÔ¼ö
+// í¬ìŠ¤í„°ë¼ì´ì œì´ì…˜ í•¨ìˆ˜
 void CRAWDoc::OnPixelpointprocessingPosterization()
 {
 	// TODO: Add your implementation code here.
-	m_outH = m_inH;
-	m_outW = m_inW;
-	m_outSz = m_outH * m_outW;
-	m_outImg = new unsigned char[m_outSz];
-
 	CInputDialog dlg;
+	dlg.SetStr(L"ì–‘ìí™” ìˆ˜ :");
 	if (dlg.DoModal() == IDOK) {
-		int div = 256 / (int)dlg.number;
+		m_outH = m_inH;
+		m_outW = m_inW;
+		m_outSz = m_outH * m_outW;
+		m_outImg = new UCHAR[m_outSz];
+
+		int div = 256 / (int)dlg.GetNum();
 		for (int i = 0; i < m_inSz; i++) {
 			m_outImg[i] = m_inImg[i] / div * div + div / 2;
 		}
@@ -422,18 +435,19 @@ void CRAWDoc::OnPixelpointprocessingPosterization()
 }
 
 
-// ºñÆ® Æò¸é ºĞÇÒ ÇÔ¼ö
+// ë¹„íŠ¸ í‰ë©´ ë¶„í•  í•¨ìˆ˜
 void CRAWDoc::OnPixelpointprocessingBitplaneslicing()
 {
 	// TODO: Add your implementation code here.
-	m_outH = m_inH;
-	m_outW = m_inW;
-	m_outSz = m_outH * m_outW;
-	m_outImg = new unsigned char[m_outSz];
-
 	CInputDialog dlg;
+	dlg.SetStr(L"ë¹„íŠ¸ë²ˆí˜¸(1~8) :");
 	if (dlg.DoModal() == IDOK) {
-		int pos = (int)dlg.number - 1;
+		m_outH = m_inH;
+		m_outW = m_inW;
+		m_outSz = m_outH * m_outW;
+		m_outImg = new UCHAR[m_outSz];
+
+		int pos = (int)dlg.GetNum() - 1;
 		UCHAR mask = 0x01 << pos;
 		for (int i = 0; i < m_inSz; i++) {
 			UCHAR val = m_inImg[i];
@@ -444,4 +458,71 @@ void CRAWDoc::OnPixelpointprocessingBitplaneslicing()
 		}
 		m_outHistImg = MakeHistImg(m_outImg);
 	}
+}
+
+
+// ë¹„ì„ í˜• ëª…ì•” ëŒ€ë¹„ ë³€í™˜ í•¨ìˆ˜
+void CRAWDoc::OnPixelpointprocessingContraststretching()
+{
+	// TODO: Add your implementation code here.
+	CInputDialog dlg;
+	double r1 = 0;
+	double r2 = 0;
+	double s1 = 0;
+	double s2 = 0;
+
+	dlg.SetStr(L"r1:");
+	if (dlg.DoModal() == IDOK) { 
+		r1 = dlg.GetNum(); 
+	}
+	else {
+		return;
+	}
+	dlg.SetStr(L"r2:");
+	if (dlg.DoModal() == IDOK) {
+		r2 = dlg.GetNum();
+	}
+	else {
+		return;
+	}
+	dlg.SetStr(L"s1:");
+	if (dlg.DoModal() == IDOK) {
+		s1 = dlg.GetNum();
+	}
+	else {
+		return;
+	}
+	dlg.SetStr(L"s2:");
+	if (dlg.DoModal() == IDOK) {
+		s2 = dlg.GetNum();
+	}
+	else {
+		return;
+	}
+
+	double alpha = s1 / r1;
+	double beta = (s2 - s1) / (r2 - r1);
+	double gamma = (255 - s2) / (255 - r2);
+
+	m_outH = m_inH;
+	m_outW = m_inW;
+	m_outSz = m_outH * m_outW;
+	m_outImg = new UCHAR[m_outSz];
+
+	for (int i = 0; i < m_inSz; i++) {
+		UCHAR r = m_inImg[i];
+		if (0 <= r && r < r1)
+		{
+			m_outImg[i] = alpha * r;
+		}
+		if (r1 <= r && r < r2)
+		{
+			m_outImg[i] = beta * (r - r1) + s1;
+		}
+		if (r2 <= r && r < 256)
+		{
+			m_outImg[i] = gamma * (r - r2) + s2;
+		}
+	}
+	m_outHistImg = MakeHistImg(m_outImg);
 }

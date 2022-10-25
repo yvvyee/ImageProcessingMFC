@@ -184,7 +184,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_SORTING_SORTBYACCESS);
 	lstBasicCommands.AddTail(ID_SORTING_GROUPBYTYPE);
 
-	// Ãß°¡: ¸Ş´º ¼û±â±â ºñÈ°¼ºÈ­¸¦ À§ÇØ ÁÖ¼® Ã³¸®ÇÔ
+	// ì¶”ê°€: ë©”ë‰´ ìˆ¨ê¸°ê¸° ë¹„í™œì„±í™”ë¥¼ ìœ„í•´ ì£¼ì„ ì²˜ë¦¬í•¨
 	// CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
 	// Switch the order of document name and application name on the window title bar. This
