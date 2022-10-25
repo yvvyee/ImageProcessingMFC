@@ -1,2 +1,2 @@
-# MFC_Image_Processing
+# ImageProcessingMFC
 MFC based C++ application for implementation of image processing algorithms
