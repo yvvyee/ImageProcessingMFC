@@ -54,6 +54,10 @@ public:
 	afx_msg void OnPixelpointprocessingPosterization();
 	afx_msg void OnPixelpointprocessingBitplaneslicing();
 	afx_msg void OnPixelpointprocessingContraststretching();
+	afx_msg void OnHistogramprocessingStretching();
+	afx_msg void OnHistogramprocessingEndinsearch();
+	afx_msg void OnHistogramprocessingEqualization();
+	afx_msg void OnHistogramprocessingSpecification();
 };
 
 #ifndef _DEBUG  // debug version in RAWView.cpp

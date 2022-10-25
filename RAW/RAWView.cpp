@@ -38,6 +38,10 @@ BEGIN_MESSAGE_MAP(CRAWView, CView)
 	ON_COMMAND(ID_PIXELPOINTPROCESSING_POSTERIZATION, &CRAWView::OnPixelpointprocessingPosterization)
 	ON_COMMAND(ID_PIXELPOINTPROCESSING_BITPLANESLICING, &CRAWView::OnPixelpointprocessingBitplaneslicing)
 	ON_COMMAND(ID_PIXELPOINTPROCESSING_CONTRASTSTRETCHING, &CRAWView::OnPixelpointprocessingContraststretching)
+	ON_COMMAND(ID_HISTOGRAMPROCESSING_STRETCHING, &CRAWView::OnHistogramprocessingStretching)
+	ON_COMMAND(ID_HISTOGRAMPROCESSING_ENDINSEARCH, &CRAWView::OnHistogramprocessingEndinsearch)
+	ON_COMMAND(ID_HISTOGRAMPROCESSING_EQUALIZATION, &CRAWView::OnHistogramprocessingEqualization)
+	ON_COMMAND(ID_HISTOGRAMPROCESSING_SPECIFICATION, &CRAWView::OnHistogramprocessingSpecification)
 END_MESSAGE_MAP()
 
 // CRAWView construction/destruction
@@ -308,5 +312,53 @@ void CRAWView::OnPixelpointprocessingContraststretching()
 	if (!pDoc)
 		return;
 	pDoc->OnPixelpointprocessingContraststretching();
+	Invalidate(TRUE);
+}
+
+
+void CRAWView::OnHistogramprocessingStretching()
+{
+	// TODO: Add your command handler code here
+	CRAWDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	pDoc->OnHistogramprocessingStretching();
+	Invalidate(TRUE);
+}
+
+
+void CRAWView::OnHistogramprocessingEndinsearch()
+{
+	// TODO: Add your command handler code here
+	CRAWDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	pDoc->OnHistogramprocessingEndinsearch();
+	Invalidate(TRUE);
+}
+
+
+void CRAWView::OnHistogramprocessingEqualization()
+{
+	// TODO: Add your command handler code here
+	CRAWDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	pDoc->OnHistogramprocessingEqualization();
+	Invalidate(TRUE);
+}
+
+
+void CRAWView::OnHistogramprocessingSpecification()
+{
+	// TODO: Add your command handler code here
+	CRAWDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	pDoc->OnHistogramprocessingSpecification();
 	Invalidate(TRUE);
 }

@@ -526,3 +526,153 @@ void CRAWDoc::OnPixelpointprocessingContraststretching()
 	}
 	m_outHistImg = MakeHistImg(m_outImg);
 }
+
+
+// 히스토그램 스트레칭
+void CRAWDoc::OnHistogramprocessingStretching()
+{
+	// TODO: Add your implementation code here.
+	m_outH = m_inH;
+	m_outW = m_inW;
+	m_outSz = m_outH * m_outW;
+	m_outImg = new UCHAR[m_outSz];
+
+	UCHAR LOW = 0, HIGH = 255;
+	UCHAR MIN = m_inImg[0], MAX = m_inImg[0];
+	for (int i = 0; i < m_inSz; i++) {
+		if (MIN > m_inImg[i])
+			MIN = m_inImg[i];
+		if (MAX < m_inImg[i])
+			MAX = m_inImg[i];
+	}
+	for (int i = 0; i < m_outSz; i++) {
+		m_outImg[i] = (UCHAR)((m_inImg[i] - MIN) * HIGH / (MAX - MIN));
+	}
+	m_outHistImg = MakeHistImg(m_outImg);
+
+}
+
+
+// 엔드 인 탐색
+void CRAWDoc::OnHistogramprocessingEndinsearch()
+{
+	// TODO: Add your implementation code here.
+	UCHAR LOW = 0, HIGH = 255;
+	double MIN = m_inImg[0], MAX = m_inImg[0];
+
+	CInputDialog dlg;
+	dlg.SetStr(L"최소값 :");
+	if (dlg.DoModal() == IDOK) {
+		MIN = dlg.GetNum();
+	}
+	else {
+		return;
+	}
+	dlg.SetStr(L"최대값 :");
+	if (dlg.DoModal() == IDOK) {
+		MAX = dlg.GetNum();
+	}
+	else {
+		return;
+	}
+
+	m_outH = m_inH;
+	m_outW = m_inW;
+	m_outSz = m_outH * m_outW;
+	m_outImg = new UCHAR[m_outSz];
+	for (int i = 0; i < m_outSz; i++) {
+		m_outImg[i] = (UCHAR)((m_inImg[i] - MIN) * HIGH / (MAX - MIN));
+	}
+	m_outHistImg = MakeHistImg(m_outImg);
+}
+
+
+// 히스토그램 평활화
+void CRAWDoc::OnHistogramprocessingEqualization()
+{
+	// TODO: Add your implementation code here.
+	m_outH = m_inH;
+	m_outW = m_inW;
+	m_outSz = m_outH * m_outW;
+	m_outImg = new UCHAR[m_outSz];
+	double sum = 0., hist[256] = { 0., };
+	for (int i = 0, value = 0; i < m_inSz; i++) {
+		value = (int)m_inImg[i];
+		hist[value]++;
+	}
+	for (int i = 0; i < 256; i++) {
+		sum += hist[i];
+		hist[i] = sum;
+	}
+	for (int i = 0; i < m_outSz; i++) {
+		UCHAR temp = m_inImg[i];
+		m_outImg[i] = (UCHAR)(hist[temp] / m_outSz * 255);
+	}
+	m_outHistImg = MakeHistImg(m_outImg);
+}
+
+
+// 히스토그램 명세화
+void CRAWDoc::OnHistogramprocessingSpecification()
+{
+	// TODO: Add your implementation code here.
+	// 첫 번째 이미지에 대해 equalization 수행
+	this->OnHistogramprocessingEqualization();
+
+	// 두 번째 이미지 열기
+	CFile File;
+	CFileDialog OpenDlg(TRUE);
+	UCHAR* tempImg = new UCHAR[m_inSz];
+	if (OpenDlg.DoModal() == IDOK) {
+		File.Open(OpenDlg.GetPathName(), CFile::modeRead);
+		if (File.GetLength() == (unsigned)m_inSz) {
+			File.Read(tempImg, m_inSz);
+			File.Close();
+		}
+		else {
+			AfxMessageBox(L"Image size not matched");
+			return;
+		}
+	}
+	// 두번째 이미지 히스토그램 계산
+	int hist[256] = { 0, };
+	for (int i = 0, val = 0; i < m_inSz; i++) {
+		val = (int)tempImg[i];
+		hist[val]++;
+	}
+	// 누적히스토그램 계산
+	double sum = 0.;
+	for (int i = 0; i < 256; i++) {
+		sum += hist[i];
+		hist[i] = sum;
+	}
+	// 누적히스토그램 정규화
+	double min = hist[0], max = hist[255];
+	for (int i = 0; i < 256; i++) {
+		sum = hist[i];
+		hist[i] = (UCHAR)((sum - min) / (max - min) * 255);
+	}
+	// 룩업테이블 생성
+	int top = 255;
+	int bottom = top - 1;
+	UCHAR LUT[256] = { 0, };
+	while (TRUE)
+	{
+		for (int i = hist[bottom]; i < hist[top]; i++)
+		{
+			LUT[i] = top;
+		}
+		top = bottom;
+		bottom = bottom - 1;
+		if (bottom <= -1)
+		{
+			break;
+		}
+	}
+	// 첫번째 이미지의 inverse equalization 수행
+	for (int i = 0; i < m_outSz; i++) {
+		int val = (int)m_outImg[i];
+		m_outImg[i] = LUT[val];
+	}
+	m_outHistImg = MakeHistImg(m_outImg);
+}

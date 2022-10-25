@@ -81,4 +81,12 @@ public:
 	void OnPixelpointprocessingBitplaneslicing();
 	// 비선형 명암 대비 변환 함수
 	void OnPixelpointprocessingContraststretching();
+	// 히스토그램 스트레칭
+	void OnHistogramprocessingStretching();
+	// 엔드 인 탐색
+	void OnHistogramprocessingEndinsearch();
+	// 히스토그램 명세화
+	void OnHistogramprocessingEqualization();
+	// 히스토그램 명세화
+	void OnHistogramprocessingSpecification();
 };
