@@ -7,12 +7,7 @@ MFC (Microsoft Foundation Classes) based C++ application for implementation of i
 
 ![vsinstaller](images/README/vsinstaller.png)
 
-제목|내용|설명|
-|테스트1|테스트2|테스트3|
-|테스트1|테스트2|테스트3|
-|테스트1|테스트2|테스트3|
-
 ## Sample Images
 > A directory named `images` contains headerless `RAW` images and `BMP` image samples.
 
-## VS Project configurations
+## Visual Studio Solution Configurations
