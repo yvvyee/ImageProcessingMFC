@@ -58,6 +58,7 @@ public:
 	afx_msg void OnHistogramprocessingEndinsearch();
 	afx_msg void OnHistogramprocessingEqualization();
 	afx_msg void OnHistogramprocessingSpecification();
+	afx_msg void OnRegionprocessingConvolution();
 };
 
 #ifndef _DEBUG  // debug version in RAWView.cpp

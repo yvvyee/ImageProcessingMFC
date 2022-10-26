@@ -42,6 +42,7 @@ BEGIN_MESSAGE_MAP(CRAWView, CView)
 	ON_COMMAND(ID_HISTOGRAMPROCESSING_ENDINSEARCH, &CRAWView::OnHistogramprocessingEndinsearch)
 	ON_COMMAND(ID_HISTOGRAMPROCESSING_EQUALIZATION, &CRAWView::OnHistogramprocessingEqualization)
 	ON_COMMAND(ID_HISTOGRAMPROCESSING_SPECIFICATION, &CRAWView::OnHistogramprocessingSpecification)
+	ON_COMMAND(ID_REGIONPROCESSING_CONVOLUTION, &CRAWView::OnRegionprocessingConvolution)
 END_MESSAGE_MAP()
 
 // CRAWView construction/destruction
@@ -360,5 +361,17 @@ void CRAWView::OnHistogramprocessingSpecification()
 	if (!pDoc)
 		return;
 	pDoc->OnHistogramprocessingSpecification();
+	Invalidate(TRUE);
+}
+
+
+void CRAWView::OnRegionprocessingConvolution()
+{
+	// TODO: Add your command handler code here
+	CRAWDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	pDoc->OnRegionprocessingConvolution();
 	Invalidate(TRUE);
 }

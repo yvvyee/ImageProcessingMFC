@@ -33,6 +33,8 @@ public:
 // Operations
 public:
 	UCHAR* MakeHistImg(UCHAR* img, bool isOut = true);	// 히스토그램 이미지를 생성하는 함수
+	double** ConvolutionProcess(UCHAR* img, double mask[3][3]);
+	double** ImageBuffer2D(int height, int width);
 
 // Overrides
 public:
@@ -89,4 +91,6 @@ public:
 	void OnHistogramprocessingEqualization();
 	// 히스토그램 명세화
 	void OnHistogramprocessingSpecification();
+	// 3x3 크기의 컨볼루션 마스크를 사용한 엠보싱 함수
+	void OnRegionprocessingConvolution();
 };

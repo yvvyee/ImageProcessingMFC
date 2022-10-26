@@ -219,15 +219,7 @@ BOOL CRAWDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	CFile File;
 	File.Open(lpszPathName, CFile::modeRead | CFile::typeBinary);
 
-	if (File.GetLength() == 32 * 32) {
-		m_inH = 32;
-		m_inW = 32;
-	}
-	else if (File.GetLength() == 64 * 64) {
-		m_inH = 64;
-		m_inW = 64;
-	}
-	else if (File.GetLength() == 128 * 128) {
+	if (File.GetLength() == 128 * 128) {
 		m_inH = 128;
 		m_inW = 128;
 	}
@@ -239,17 +231,9 @@ BOOL CRAWDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		m_inH = 512;
 		m_inW = 512;
 	}
-	else if (File.GetLength() == 640 * 480) {
-		m_inH = 480;
-		m_inW = 640;
-	}
-	else if (File.GetLength() == 176 * 144) {
-		m_inH = 144;
-		m_inW = 176;
-	}
-	else if (File.GetLength() == 176 * 216) {
-		m_inH = 216;
-		m_inW = 176;
+	else if (File.GetLength() == 320 * 240) {
+		m_inH = 240;
+		m_inW = 320;
 	}
 	else {
 		AfxMessageBox(L"Not Support Size", MB_OK | MB_ICONEXCLAMATION);
@@ -267,7 +251,6 @@ BOOL CRAWDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	m_inHistImg = MakeHistImg(m_inImg, false);
 	return TRUE;
 }
-
 
 // 기존 화소에 상수 값을 더하는 함수
 void CRAWDoc::OnPixelpointprocessingAdd()
@@ -675,4 +658,124 @@ void CRAWDoc::OnHistogramprocessingSpecification()
 		m_outImg[i] = LUT[val];
 	}
 	m_outHistImg = MakeHistImg(m_outImg);
+}
+
+
+// 3x3 크기의 컨볼루션 마스크를 사용한 엠보싱 함수
+void CRAWDoc::OnRegionprocessingConvolution()
+{
+	// TODO: Add your implementation code here.
+	
+	// 3가지 종류의 마스크 생성
+	double mask[3][3][3] = {
+		{{ -1., 0., 0. },	// 1. 마스크의 합이 0
+		 {  0., 0., 0. },
+		 {  0., 0., 1. }},
+
+		{{ 0., 0., 0. },	// 2. 가운데 값만 1
+		 { 0., 1., 0. },
+		 { 0., 0., 0. }},
+
+		{{ 1.,  1., 1. },	// 3. 마스크의 합이 0
+		 { 1., -8., 1. },
+		 { 1.,  1., 1. }}
+	};
+
+	// 마스크 선택
+	int idx = 0;
+	CInputDialog dlg;
+	dlg.SetStr(L"마스크 번호(1~3) :");
+	if (dlg.DoModal() == IDOK) {
+		idx = (int)dlg.GetNum() - 1;
+		if (idx < 0 || idx > 3) {
+			AfxMessageBox(L"Incorrect Mask Number");
+			return;
+		}
+	}
+	else {
+		return;
+	}
+
+	// 컨볼루션 연산 수행
+	double** inImgTemp = ConvolutionProcess(m_inImg, mask[idx]);
+
+	// 원본 영상의 평균값을 계산
+	int SUM = 0;
+	for (int i = 0; i < m_inSz; i++) {
+		SUM += (int)m_inImg[i];
+	}
+	int AVG = (int)(SUM / m_inSz);
+
+	// 결과 이미지 버퍼에 저장
+	m_outH = m_inH;
+	m_outW = m_inW;
+	m_outSz = m_outH * m_outW;
+	m_outImg = new UCHAR[m_outSz];
+
+	for (int i = 0; i < m_outH; i++) {
+		for (int j = 0; j < m_outW; j++) {
+			int val = inImgTemp[i][j] + AVG;
+			if (val > 255) {
+				m_outImg[i * m_outW + j] = 255;
+			}
+			else if (val < 0) {
+				m_outImg[i * m_outW + j] = 0;
+			}
+			else {
+				m_outImg[i * m_outW + j] = val;
+			}
+		}
+	} // 컨볼루션 후 평균 값을 더한 결과가 0 ~ 255 범위 내 값이 되도록 조정 (clipping)
+	m_outHistImg = MakeHistImg(m_outImg);
+}
+
+// 3x3 크기의 컨볼루션 연산을 수행하는 함수
+double** CRAWDoc::ConvolutionProcess(UCHAR* img, double mask[3][3])
+{
+	// 2차원 이미지 버퍼 선언
+	double** inTemp = ImageBuffer2D(m_inH + 2, m_inW + 2);
+	double** outTemp = ImageBuffer2D(m_inH, m_inW);
+
+	// 입력 이미지를 2차원 버퍼에 저장
+	for (int i = 0; i < m_inH; i++) {
+		for (int j = 0; j < m_inW; j++) {
+			inTemp[i][j] = (double)m_inImg[i * m_inW + j];
+		}
+	}
+
+	// 컨볼루션 연산
+	double SUM = 0.;
+	// 전체 이미지에 대해 슬라이딩 윈도 방식으로 수행
+	for (int i = 0; i < m_inH; i++) {
+		for (int j = 0; j < m_inW; j++) {
+			// 마스크의 크기만큼 요소별 곱의 전체 합을 계산
+			for (int n = 0; n < 3; n++) {
+				for (int m = 0; m < 3; m++) {
+					SUM += mask[n][m] * inTemp[i + n][j + m];
+				}
+			}
+			outTemp[i][j] = SUM;	// 전체합을 출력 이미지의 화소 위치에 저장
+			SUM = 0.;				// 변수 초기화
+		}
+	}
+	delete[] inTemp; // 입력 이미지 버퍼는 해제
+	return outTemp;
+}
+
+// 2차원 이미지 배열을 할당 후 반환
+double** CRAWDoc::ImageBuffer2D(int height, int width)
+{
+	// 이미지의 세로 길이만큼 동적 할당
+	double** temp = new double* [height];
+	for (int i = 0; i < height; i++) {
+		// 이미지의 가로 길이만큼 동적 할당
+		temp[i] = new double[width];
+	}
+	// 할당된 버퍼를 초기화
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			temp[i][j] = 0.;
+		}
+	}
+	return temp;
 }
