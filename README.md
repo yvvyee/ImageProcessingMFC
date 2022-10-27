@@ -11,3 +11,6 @@ MFC (Microsoft Foundation Classes) based C++ application for implementation of i
 > A directory named `images` contains headerless `RAW` images and `BMP` image samples.
 ***
 ## Visual Studio Solution Configurations
+***
+## References
+> This repository states that many of the contents of https://github.com/datakun/ImageToolBox were referenced.
