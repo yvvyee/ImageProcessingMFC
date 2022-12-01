@@ -43,6 +43,7 @@ BEGIN_MESSAGE_MAP(CRAWView, CView)
 	ON_COMMAND(ID_HISTOGRAMPROCESSING_EQUALIZATION, &CRAWView::OnHistogramprocessingEqualization)
 	ON_COMMAND(ID_HISTOGRAMPROCESSING_SPECIFICATION, &CRAWView::OnHistogramprocessingSpecification)
 	ON_COMMAND(ID_REGIONPROCESSING_CONVOLUTION, &CRAWView::OnRegionprocessingConvolution)
+	ON_COMMAND(ID_PIXELPOINTPROCESSING_DISSOLVE, &CRAWView::OnPixelpointprocessingDissolve)
 END_MESSAGE_MAP()
 
 // CRAWView construction/destruction
@@ -122,6 +123,14 @@ void CRAWView::OnDraw(CDC* pDC)
 		return;
 
 	// TODO: add draw code for native data here
+	/*int i, dan = 7;
+	CString str;
+	for (i = 1; i <= 9; i++)
+	{
+		str.Format(_T("%d x %d = %d"), dan, i, dan * i);
+		pDC->TextOut(20, 20 * i, str);
+	}*/
+
 	CRect viewRect;
 	CDC memDC;
 	CBitmap bit;
@@ -373,5 +382,17 @@ void CRAWView::OnRegionprocessingConvolution()
 	if (!pDoc)
 		return;
 	pDoc->OnRegionprocessingConvolution();
+	Invalidate(TRUE);
+}
+
+
+void CRAWView::OnPixelpointprocessingDissolve()
+{
+	// TODO: Add your command handler code here
+	CRAWDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	pDoc->OnPixelpointprocessingDissolve();
 	Invalidate(TRUE);
 }

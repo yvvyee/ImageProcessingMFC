@@ -190,6 +190,7 @@
     <ClInclude Include="BMPView.h" />
     <ClInclude Include="CDib.h" />
     <ClInclude Include="ChildFrm.h" />
+    <ClInclude Include="CHistogramDlg.h" />
     <ClInclude Include="ClassView.h" />
     <ClInclude Include="FileView.h" />
     <ClInclude Include="framework.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="BMPView.cpp" />
     <ClCompile Include="CDib.cpp" />
     <ClCompile Include="ChildFrm.cpp" />
+    <ClCompile Include="CHistogramDlg.cpp" />
     <ClCompile Include="ClassView.cpp" />
     <ClCompile Include="FileView.cpp" />
     <ClCompile Include="MainFrm.cpp" />

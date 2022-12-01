@@ -3,8 +3,7 @@
 
 #define DIB_HEADER_MARKER ((WORD) ('M' << 8) | 'B')
 
-CDib::CDib()
-{
+CDib::CDib() {
     m_nWidth = 0;
     m_nHeight = 0;
     m_nBitCount = 0;
@@ -14,8 +13,7 @@ CDib::CDib()
     m_pRgbPtr = NULL;
 }
 
-CDib::CDib(const CDib& dib)
-{
+CDib::CDib(const CDib& dib) {
     m_nWidth = 0;
     m_nHeight = 0;
     m_nBitCount = 0;
@@ -32,8 +30,7 @@ CDib::CDib(const CDib& dib)
     InitDib();
 }
 
-CDib::~CDib()
-{
+CDib::~CDib() {
     Destroy();
 }
 
@@ -236,13 +233,12 @@ void CDib::Draw(HDC hDC, int dx, int dy, int dw, int dh, DWORD dwRop)
         SRCCOPY);
 }
 
-void CDib::Draw(HDC hDC, int dx, int dy, int dw, int dh, int sx, int sy, int sw, int sh, DWORD dwRop)
-{
+void CDib::Draw(HDC hDC, int dx, int dy, int dw, int dh, 
+    int sx, int sy, int sw, int sh, DWORD dwRop) {
     if (m_pDib == NULL) { return; }
 
     LPBITMAPINFO lpbi = (LPBITMAPINFO)m_pDib;
     LPSTR lpDIBBits = (LPSTR)GetDibBitsAddr();
-
     ::StretchDIBits(
         hDC,
         dx, dy,
@@ -255,14 +251,12 @@ void CDib::Draw(HDC hDC, int dx, int dy, int dw, int dh, int sx, int sy, int sw,
         SRCCOPY);
 }
 
-CDib& CDib::operator=(const CDib& dib)
-{
+CDib& CDib::operator = (const CDib& dib) {
     // 재귀 검사
     if (this == &dib) { return *this; }
 
     // dib가 비어있는 CDib 객체라면 자신도 비운다.
-    if (dib.m_pDib == NULL)
-    {
+    if (dib.m_pDib == NULL) {
         Destroy();
         return *this;
     }
@@ -278,15 +272,12 @@ CDib& CDib::operator=(const CDib& dib)
 
     // 멤버 변수 초기화
     InitDib();
-
     return *this;
 }
 
-BOOL CDib::Copy(CDib* pDib)
-{
+BOOL CDib::Copy(CDib* pDib) {
     // pDib가 비어있는 CDib 객체를 가리키고 있다면 자신도 비운다.
-    if (!pDib->IsValid())
-    {
+    if (!pDib->IsValid()) {
         Destroy();
         return TRUE;
     }
@@ -305,88 +296,6 @@ BOOL CDib::Copy(CDib* pDib)
 
     // 멤버 변수 초기화
     InitDib();
-    return TRUE;
-}
-
-BOOL CDib::CopyToClipboard()
-{
-    int     dwSizeDib;
-    HANDLE  hDib;
-
-    if (!::OpenClipboard(NULL))	return FALSE;
-
-    // DIB 전체를 전역 메모리 블럭에 복사
-
-    dwSizeDib = GetDibSize();
-    hDib = ::GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, dwSizeDib);
-    if (hDib == NULL)
-    {
-        ::CloseClipboard();
-        return FALSE;
-    }
-
-    void* lpDib = ::GlobalLock((HGLOBAL)hDib);
-    memcpy(lpDib, GetBitmapInfoAddr(), dwSizeDib);
-    ::GlobalUnlock(hDib);
-
-    // 클립보드에 데이터 입력
-
-    ::EmptyClipboard();
-    ::SetClipboardData(CF_DIB, hDib);
-    ::CloseClipboard();
-
-    return TRUE;
-}
-
-BOOL CDib::PasteFromClipboard()
-{
-    HANDLE  hDib;
-    DWORD   dwSize;
-    void* lpDib;
-
-    // CF_DIB 타입이 아니면 종료한다.
-    if (!::IsClipboardFormatAvailable(CF_DIB)) return FALSE;
-
-    // 클립 보드를 연다.
-    if (!::OpenClipboard(NULL)) return FALSE;
-
-    // 클립 보드 내용을 받아온다.
-    hDib = ::GetClipboardData(CF_DIB);
-    if (hDib == NULL)
-    {
-        ::CloseClipboard();
-        return FALSE;
-    }
-
-    // 메모리 블럭의 크기는 DIB 전체 크기와 동일
-    dwSize = (DWORD)::GlobalSize((HGLOBAL)hDib);
-    lpDib = ::GlobalLock((HGLOBAL)hDib);
-
-    LPBITMAPINFOHEADER lpbi = (LPBITMAPINFOHEADER)lpDib;
-    LONG nWidth = lpbi->biWidth;
-    LONG nHeight = lpbi->biHeight;
-    WORD nBitCount = lpbi->biBitCount;
-    DWORD dwSizeDib;
-
-    DWORD dwSizeImage = nHeight * (DWORD)((nWidth * nBitCount / 8 + 3) & ~3);
-    if (nBitCount == 8)
-        dwSizeDib = sizeof(BITMAPINFOHEADER) + sizeof(RGBQUAD) * (1 << nBitCount) + dwSizeImage;
-    else
-        dwSizeDib = sizeof(BITMAPINFOHEADER) + dwSizeImage;
-
-    // 현재 설정된 CDib 객체가 있다면 삭제한다.
-    if (m_pDib) Destroy();
-
-    m_pDib = new BYTE[dwSizeDib];
-    memcpy(m_pDib, lpDib, dwSizeDib);
-
-    ::GlobalUnlock(hDib);
-
-    ::CloseClipboard();
-
-    // 멤버 변수 값 설정
-    InitDib();
-
     return TRUE;
 }
 
@@ -462,10 +371,8 @@ BOOL CDib::LoadBMP(LPCTSTR lpszFileName)
         file.Close();
         return FALSE;
     }
-
     // 파일 닫기
     file.Close();
-
     return TRUE;
 }
 
@@ -503,35 +410,37 @@ BOOL CDib::SaveBMP(LPCTSTR lpszFileName)
     return TRUE;
 }
 
-LPBITMAPINFO CDib::GetBitmapInfoAddr() {
+LPBITMAPINFO CDib::GetBitmapInfoAddr() 
+{
     return (LPBITMAPINFO)m_pDib;
 }
 
-int CDib::GetPaletteNums()
+int CDib::GetPaletteNums() 
 {
-    switch (m_nBitCount)
+    switch (m_nBitCount) 
     {
-    case 1: return 2;
-    case 2: return 16;
-    case 8: return 256;
-    default: return 0;
+        case 1: return 2;
+        case 2: return 16;
+        case 8: return 256;
+        default: return 0;
     }
 }
 
-LPVOID CDib::GetDibBitsAddr()
+LPVOID CDib::GetDibBitsAddr() 
 {
     LPBITMAPINFOHEADER lpbmi;
     LPVOID lpDibBits;
 
     lpbmi = (LPBITMAPINFOHEADER)m_pDib;
-    lpDibBits = (LPVOID)((BYTE*)m_pDib + lpbmi->biSize
-        + sizeof(RGBQUAD) * GetPaletteNums());
+    lpDibBits = (LPVOID)((BYTE*)m_pDib 
+        + lpbmi->biSize
+        + sizeof(RGBQUAD) 
+        * GetPaletteNums());
 
     return lpDibBits;
 }
 
-BOOL CDib::InitDib()
-{
+BOOL CDib::InitDib() {
     LPBITMAPINFOHEADER lpbmi = (LPBITMAPINFOHEADER)m_pDib;
 
     // 이미지의 가로크기, 세로크기, 픽셀 당 비트수, DIB 크기에 대한 멤버변수 설정
@@ -541,18 +450,16 @@ BOOL CDib::InitDib()
 
     DWORD dwSizeImage = m_nHeight *
         (DWORD)((m_nWidth * m_nBitCount / 8 + 3) & ~3);
-    m_nDibSize = sizeof(BITMAPINFOHEADER) + sizeof(RGBQUAD) * GetPaletteNums()
-        + dwSizeImage;
+    m_nDibSize = sizeof(BITMAPINFOHEADER) + sizeof(RGBQUAD) 
+        * GetPaletteNums() + dwSizeImage;
 
     // m_pPtr 또는 m_pRgbPtr 멤버 변수 설정
     if (!AllocPtr()) { return FALSE; }
     return TRUE;
 }
 
-BOOL CDib::AllocPtr()
-{
-    if (m_nBitCount == 8)        // 그레이스케일 이미지
-    {
+BOOL CDib::AllocPtr() {
+    if (m_nBitCount == 8) { // 그레이스케일 이미지
         if (m_pPtr) FreePtr();
         m_pPtr = new BYTE * [m_nHeight];
         if (!m_pPtr) return FALSE;
@@ -562,8 +469,7 @@ BOOL CDib::AllocPtr()
         for (int i = 0; i < m_nHeight; i++)
             m_pPtr[i] = (BYTE*)(pData + (m_nHeight - i - 1) * nRWidth);
     }
-    else if (m_nBitCount == 24)  // 트루칼라 이미지
-    {
+    else if (m_nBitCount == 24) { // 트루칼라 이미지
         if (m_pRgbPtr) FreePtr();
         m_pRgbPtr = new RGBBYTE * [m_nHeight];
         if (!m_pRgbPtr) return FALSE;
@@ -573,9 +479,9 @@ BOOL CDib::AllocPtr()
         for (int i = 0; i < m_nHeight; i++)
             m_pRgbPtr[i] = (RGBBYTE*)(pData + (m_nHeight - i - 1) * nRWidth);
     }
-    else
+    else {
         return FALSE;
-
+    }
     return TRUE;
 }
 

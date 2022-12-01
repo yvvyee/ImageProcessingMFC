@@ -13,6 +13,8 @@
 #include "BMPDoc.h"
 #include "BMPView.h"
 
+#include "CHistogramDlg.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -29,6 +31,7 @@ BEGIN_MESSAGE_MAP(CBMPView, CScrollView)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CBMPView::OnFilePrintPreview)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
+	ON_COMMAND(ID_HISTOGRAM, &CBMPView::OnHistogram)
 END_MESSAGE_MAP()
 
 // CBMPView construction/destruction
@@ -148,4 +151,18 @@ void CBMPView::OnInitialUpdate()
 	}
 	SetScrollSizes(MM_TEXT, sizeTotal);
 	ResizeParentToFit(TRUE);
+}
+
+
+void CBMPView::OnHistogram()
+{
+	// TODO: Add your command handler code here
+	CBMPDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	CHistogramDlg dlg;
+	dlg.SetImage(pDoc->m_Dib);
+	dlg.DoModal();
 }

@@ -33,8 +33,14 @@ public:
 	BOOL IsValid();
 
 	// 이미지를 생성 & 소멸
-	BOOL CreateGrayImage(int nWidth, int nHeight, BYTE value = 255);
-	BOOL CreateRGBImage(int nWidth, int nHeight, COLORREF value = 0x00ffffff);
+	BOOL CreateGrayImage(
+		int nWidth, 
+		int nHeight, 
+		BYTE value = 255);
+	BOOL CreateRGBImage(
+		int nWidth, 
+		int nHeight, 
+		COLORREF value = 0x00ffffff);
 
 	// 파일입출력
 	BOOL Load(LPCTSTR lpszFileName);
@@ -42,16 +48,21 @@ public:
 
 	// 그리기 함수
 	void Draw(HDC hDC);
-	void Draw(HDC hDC, int x, int y);
-	void Draw(HDC hDC, int dx, int dy, int dw, int dh, DWORD dwRop = SRCCOPY);
-	void Draw(HDC hDC, int dx, int dy, int dw, int dh, int sx, int sy, int sw, int sh, DWORD dwRop = SRCCOPY);
+	void Draw(HDC hDC, 
+		int x, int y);
+	void Draw(HDC hDC, 
+		int dx, int dy, 
+		int dw, int dh, 
+		DWORD dwRop = SRCCOPY);
+	void Draw(HDC hDC, 
+		int dx, int dy, 
+		int dw, int dh, 
+		int sx, int sy, 
+		int sw, int sh, 
+		DWORD dwRop = SRCCOPY);
 
 	// 비트맵 복사
 	BOOL Copy(CDib* pDib);
-
-	// 클립보드를 이용한 복사하기와 붙여넣기
-	BOOL CopyToClipboard();
-	BOOL PasteFromClipboard();
 
 	// 치환 연산자 재정의
 	// example: CDib a; CDib b; a = b;

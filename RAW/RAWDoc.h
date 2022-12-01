@@ -93,4 +93,6 @@ public:
 	void OnHistogramprocessingSpecification();
 	// 3x3 크기의 컨볼루션 마스크를 사용한 엠보싱 함수
 	void OnRegionprocessingConvolution();
+	// 두 이미지를 합성하는 함수
+	void OnPixelpointprocessingDissolve();
 };

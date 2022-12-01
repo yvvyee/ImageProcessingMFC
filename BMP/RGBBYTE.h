@@ -18,14 +18,11 @@ template<typename T>
 inline T limit(const T& value, const T& lower, const T& upper)
 {
 	T tmp = value;
-	if (value > upper)
-	{
+	if (value > upper) {
 		tmp = upper;
 	}
-	else
-	{
-		if (value < lower)
-		{
+	else {
+		if (value < lower) {
 			tmp = lower;
 		}
 	}

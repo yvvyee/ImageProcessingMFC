@@ -668,13 +668,13 @@ void CRAWDoc::OnRegionprocessingConvolution()
 	
 	// 3가지 종류의 마스크 생성
 	double mask[3][3][3] = {
-		{{ -1., 0., 0. },	// 1. 마스크의 합이 0
-		 {  0., 0., 0. },
-		 {  0., 0., 1. }},
-
-		{{ 0., 0., 0. },	// 2. 가운데 값만 1
+		{{ 0., 0., 0. },	// 1. 가운데 값만 1
 		 { 0., 1., 0. },
 		 { 0., 0., 0. }},
+
+		{{ -1., 0., 0. },	// 2. 마스크의 합이 0
+		 {  0., 0., 0. },
+		 {  0., 0., 1. }},
 
 		{{ 1.,  1., 1. },	// 3. 마스크의 합이 0
 		 { 1., -8., 1. },
@@ -778,4 +778,40 @@ double** CRAWDoc::ImageBuffer2D(int height, int width)
 		}
 	}
 	return temp;
+}
+
+// 두 이미지를 합성하는 함수
+void CRAWDoc::OnPixelpointprocessingDissolve() {
+	// 두 번째 이미지 열기
+	CFile File;
+	CFileDialog OpenDlg(TRUE);
+	UCHAR* tempImg = new UCHAR[m_inSz];
+	if (OpenDlg.DoModal() == IDOK) {
+		File.Open(OpenDlg.GetPathName(), CFile::modeRead);
+		if (File.GetLength() == (unsigned)m_inSz) {
+			File.Read(tempImg, m_inSz);
+			File.Close();
+		}
+		else {
+			AfxMessageBox(L"Image size not matched");
+			return;
+		}
+	}
+
+	// 알파 값 입력
+	CInputDialog dlg;
+	if (dlg.DoModal() == IDOK) {
+		m_outH = m_inH;
+		m_outW = m_inW;
+		m_outSz = m_outH * m_outW;
+		m_outImg = new UCHAR[m_outSz];
+
+		double alpha = dlg.GetNum();
+		for (int i = 0; i < m_inSz; i++) {
+			UCHAR val = (UCHAR)(alpha * m_inImg[i] 
+				+ (1 - alpha) * tempImg[i]);
+			m_outImg[i] = val;
+		}
+		m_outHistImg = MakeHistImg(m_outImg);
+	}
 }
