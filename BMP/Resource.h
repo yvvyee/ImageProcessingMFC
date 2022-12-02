@@ -85,6 +85,13 @@
 #define IDS_EXPLORER                    305
 #define IDS_EDIT_MENU                   306
 #define IDD_HISTOGRAM                   310
+#define IDD_FILTER                      312
+#define IDC_COMBO_FILTER                1000
+#define IDC_EDIT_KSIZE                  1001
+#define IDC_SPIN_KSIZE                  1003
+#define IDC_EDIT_SIGMA                  1004
+#define IDC_SPIN2                       1005
+#define IDC_SPIN_SIGMA                  1005
 #define ID_HISTOGRAM                    32771
 #define ID_HISTOGRAMPROCESSING_HISTOGRAM 32772
 #define ID_COLORMODEL_RGB2YUV           32773
@@ -93,9 +100,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        312
+#define _APS_NEXT_RESOURCE_VALUE        314
 #define _APS_NEXT_COMMAND_VALUE         32774
-#define _APS_NEXT_CONTROL_VALUE         1000
+#define _APS_NEXT_CONTROL_VALUE         1006
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

@@ -14,6 +14,8 @@
 
 #include <propkey.h>
 
+#include "CIP.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -43,21 +45,14 @@ BOOL CBMPDoc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 
-	// TODO: add reinitialization code here
-	// (SDI documents will reuse this document)
-
-	// return TRUE; // 기존 코드 주석
 	BOOL bSuccess = TRUE;
-	if (theApp.m_pNewDib != NULL)
-	{
+	if (theApp.m_pNewDib != NULL) {
 		m_Dib.Copy(theApp.m_pNewDib);
 		theApp.m_pNewDib = NULL;
 	}
-	else
-	{
+	else {
 		bSuccess = FALSE;
 	}
-
 	return bSuccess;
 }
 
@@ -174,63 +169,42 @@ BOOL CBMPDoc::OnSaveDocument(LPCTSTR lpszPathName)
 CDib *CBMPDoc::OnColormodelRgb2yuv(CDib dib)
 {
 	// TODO: Add your implementation code here.
-	int w = dib.GetWidth();
-	int h = dib.GetHeight();
-
-	CDib *temp = new CDib[3];
-
 	if (dib.GetBitCount() == 24)
 	{
-		RGBBYTE** ptr = dib.GetRGBPtr();
-		UCHAR Y = 0;
-		UCHAR U = 0;
-		UCHAR V = 0;
+		int w = dib.GetWidth();
+		int h = dib.GetHeight();
 
-		float value = 0;
+		CDib* temp = new CDib[3];
 
 		temp[0].Copy(&dib);
 		temp[1].Copy(&dib);
 		temp[2].Copy(&dib);
-		
+
+		DOUBLE*** YUV = RGB2YUV(dib);
+
 		RGBBYTE** yPtr = temp[0].GetRGBPtr();
 		RGBBYTE** uPtr = temp[1].GetRGBPtr();
 		RGBBYTE** vPtr = temp[2].GetRGBPtr();
 
-		for (register int j = 0; j < h; j++) 
+		for (register int j = 0; j < h; j++)
 		{
-			for (register int i = 0; i < w; i++) 
+			for (register int i = 0; i < w; i++)
 			{
-				// Y = 0.299R + 0.587G + 0.114B
-				// U = -0.147R - 0.289G + 0.437B
-				// V = 0.615R - 0.515G - 0.100B
-				value =	  0.299 * ptr[j][i].r
-						+ 0.587 * ptr[j][i].g
-						+ 0.114 * ptr[j][i].b;
-				Y = (UCHAR)limit(value);
+				yPtr[j][i].r = (BYTE)limit(YUV[0][j][i] * 255.);
+				yPtr[j][i].g = (BYTE)limit(YUV[0][j][i] * 255.);
+				yPtr[j][i].b = (BYTE)limit(YUV[0][j][i] * 255.);
 
-				value = - 0.147 * ptr[j][i].r
-						- 0.289 * ptr[j][i].g
-						+ 0.437 * ptr[j][i].b;
-				U = (UCHAR)limit(value);
+				uPtr[j][i].r = (BYTE)limit(YUV[1][j][i] * 255.);
+				uPtr[j][i].g = (BYTE)limit(YUV[1][j][i] * 255.);
+				uPtr[j][i].b = (BYTE)limit(YUV[1][j][i] * 255.);
 
-				value =   0.615 * ptr[j][i].r
-						- 0.515 * ptr[j][i].g
-						- 0.100 * ptr[j][i].b;
-				V = (UCHAR)limit(value);
-
-				yPtr[j][i].r = Y;
-				yPtr[j][i].g = Y;
-				yPtr[j][i].b = Y;
-
-				uPtr[j][i].r = U;
-				uPtr[j][i].g = U;
-				uPtr[j][i].b = U;
-
-				vPtr[j][i].r = V;
-				vPtr[j][i].g = V;
-				vPtr[j][i].b = V;
+				vPtr[j][i].r = (BYTE)limit(YUV[2][j][i] * 255.);
+				vPtr[j][i].g = (BYTE)limit(YUV[2][j][i] * 255.);
+				vPtr[j][i].b = (BYTE)limit(YUV[2][j][i] * 255.);
 			}
 		}
+		delete[] YUV;
+		return temp;
 	}
 	else if (dib.GetBitCount() == 8)
 	{
@@ -242,5 +216,4 @@ CDib *CBMPDoc::OnColormodelRgb2yuv(CDib dib)
 		AfxMessageBox(L"Wrong Image Format!");
 		return nullptr;
 	}
-	return temp;
 }
