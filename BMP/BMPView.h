@@ -46,6 +46,7 @@ protected:
 public:
 	virtual void OnInitialUpdate();
 	afx_msg void OnHistogram();
+	afx_msg void OnColormodelRgb2yuv();
 };
 
 #ifndef _DEBUG  // debug version in BMPView.cpp

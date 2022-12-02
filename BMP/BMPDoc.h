@@ -49,4 +49,5 @@ protected:
 public:
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
 	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
+	CDib *OnColormodelRgb2yuv(CDib dib);
 };

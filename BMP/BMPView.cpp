@@ -32,6 +32,7 @@ BEGIN_MESSAGE_MAP(CBMPView, CScrollView)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
 	ON_COMMAND(ID_HISTOGRAM, &CBMPView::OnHistogram)
+	ON_COMMAND(ID_COLORMODEL_RGB2YUV, &CBMPView::OnColormodelRgb2yuv)
 END_MESSAGE_MAP()
 
 // CBMPView construction/destruction
@@ -162,7 +163,26 @@ void CBMPView::OnHistogram()
 	if (!pDoc)
 		return;
 
-	CHistogramDlg dlg;
-	dlg.SetImage(pDoc->m_Dib);
-	dlg.DoModal();
+	CHistogramDlg HDlg;
+	HDlg.SetImage(pDoc->m_Dib);
+	HDlg.DoModal();
+}
+
+
+void CBMPView::OnColormodelRgb2yuv()
+{
+	// TODO: Add your command handler code here
+	CBMPDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	CDib dib = pDoc->m_Dib;
+	CDib* result = pDoc->OnColormodelRgb2yuv(dib);
+	
+	if (result != nullptr) {
+		AfxNewImage(result[0]);
+		AfxNewImage(result[1]);
+		AfxNewImage(result[2]);
+	}
 }
