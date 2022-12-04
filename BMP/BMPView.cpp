@@ -33,6 +33,9 @@ BEGIN_MESSAGE_MAP(CBMPView, CScrollView)
 	ON_WM_RBUTTONUP()
 	ON_COMMAND(ID_HISTOGRAM, &CBMPView::OnHistogram)
 	ON_COMMAND(ID_COLORMODEL_RGB2YUV, &CBMPView::OnColormodelRgb2yuv)
+	ON_COMMAND(ID_FRAMEPROCESSING_MOTIONESTIMATION, &CBMPView::OnFrameprocessingMotionestimation)
+	ON_COMMAND(ID_FRAMEPROCESSING_MOTIONCOMPENSATION, &CBMPView::OnFrameprocessingMotioncompensation)
+	ON_COMMAND(ID_FRAMEPROCESSING_SIMPLEDIFFERENCE, &CBMPView::OnFrameprocessingSimpledifference)
 END_MESSAGE_MAP()
 
 // CBMPView construction/destruction
@@ -185,4 +188,44 @@ void CBMPView::OnColormodelRgb2yuv()
 		AfxNewImage(result[1]);
 		AfxNewImage(result[2]);
 	}
+}
+
+
+void CBMPView::OnFrameprocessingMotionestimation()
+{
+	// TODO: Add your command handler code here
+	CBMPDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	CDib dib = pDoc->m_Dib;
+	pDoc->OnFrameprocessingMotionestimation(dib);
+	//AfxNewImage(dib);
+}
+
+
+void CBMPView::OnFrameprocessingMotioncompensation()
+{
+	// TODO: Add your command handler code here
+	CBMPDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	CDib dib = pDoc->m_Dib;
+	pDoc->OnFrameprocessingMotioncompensation();
+}
+
+
+void CBMPView::OnFrameprocessingSimpledifference()
+{
+	// TODO: Add your command handler code here
+	CBMPDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	CDib dib = pDoc->m_Dib;
+	pDoc->OnFrameprocessingSimpledifference(dib);
 }

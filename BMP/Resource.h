@@ -90,18 +90,20 @@
 #define IDC_EDIT_KSIZE                  1001
 #define IDC_SPIN_KSIZE                  1003
 #define IDC_EDIT_SIGMA                  1004
-#define IDC_SPIN2                       1005
 #define IDC_SPIN_SIGMA                  1005
 #define ID_HISTOGRAM                    32771
 #define ID_HISTOGRAMPROCESSING_HISTOGRAM 32772
 #define ID_COLORMODEL_RGB2YUV           32773
+#define ID_FRAMEPROCESSING_MOTIONESTIMATION 32774
+#define ID_FRAMEPROCESSING_MOTIONCOMPENSATION 32775
+#define ID_FRAMEPROCESSING_SIMPLEDIFFERENCE 32776
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        314
-#define _APS_NEXT_COMMAND_VALUE         32774
+#define _APS_NEXT_COMMAND_VALUE         32777
 #define _APS_NEXT_CONTROL_VALUE         1006
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

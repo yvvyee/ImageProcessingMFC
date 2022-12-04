@@ -50,4 +50,7 @@ public:
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
 	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
 	CDib *OnColormodelRgb2yuv(CDib dib);
+	void OnFrameprocessingMotionestimation(CDib& reference);
+	void OnFrameprocessingMotioncompensation();
+	void OnFrameprocessingSimpledifference(CDib dib);
 };

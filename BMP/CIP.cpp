@@ -76,3 +76,22 @@ void YUV2RGB(CDib *dib, DOUBLE*** YUV)
 		}
 	}
 }
+
+DOUBLE** Alloc2DMem(int h, int w)
+{
+	DOUBLE** temp;
+	int i, j;
+	temp = new DOUBLE * [h];
+	for (i = 0; i < h; i++)
+	{
+		temp[i] = new DOUBLE[w];
+	}
+	for (i = 0; i < h; i++)
+	{
+		for (j = 0; j < w; j++)
+		{
+			temp[i][j] = 0.0;
+		}
+	}
+	return temp;
+}

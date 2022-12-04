@@ -47,6 +47,9 @@ public:
 	virtual void OnInitialUpdate();
 	afx_msg void OnHistogram();
 	afx_msg void OnColormodelRgb2yuv();
+	afx_msg void OnFrameprocessingMotionestimation();
+	afx_msg void OnFrameprocessingMotioncompensation();
+	afx_msg void OnFrameprocessingSimpledifference();
 };
 
 #ifndef _DEBUG  // debug version in BMPView.cpp
