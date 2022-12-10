@@ -180,8 +180,7 @@ void CBMPView::OnColormodelRgb2yuv()
 	if (!pDoc)
 		return;
 
-	CDib dib = pDoc->m_Dib;
-	CDib* result = pDoc->OnColormodelRgb2yuv(dib);
+	CDib* result = pDoc->OnColormodelRgb2yuv();
 	
 	if (result != nullptr) {
 		AfxNewImage(result[0]);
@@ -199,9 +198,7 @@ void CBMPView::OnFrameprocessingMotionestimation()
 	if (!pDoc)
 		return;
 
-	CDib dib = pDoc->m_Dib;
-	pDoc->OnFrameprocessingMotionestimation(dib);
-	//AfxNewImage(dib);
+	pDoc->OnFrameprocessingMotionestimation();
 }
 
 
@@ -213,7 +210,6 @@ void CBMPView::OnFrameprocessingMotioncompensation()
 	if (!pDoc)
 		return;
 
-	CDib dib = pDoc->m_Dib;
 	pDoc->OnFrameprocessingMotioncompensation();
 }
 
@@ -226,6 +222,5 @@ void CBMPView::OnFrameprocessingSimpledifference()
 	if (!pDoc)
 		return;
 
-	CDib dib = pDoc->m_Dib;
-	pDoc->OnFrameprocessingSimpledifference(dib);
+	pDoc->OnFrameprocessingSimpledifference();
 }

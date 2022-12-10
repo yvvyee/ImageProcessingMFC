@@ -49,8 +49,8 @@ protected:
 public:
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
 	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
-	CDib *OnColormodelRgb2yuv(CDib dib);
-	void OnFrameprocessingMotionestimation(CDib& reference);
+	CDib *OnColormodelRgb2yuv();
+	void OnFrameprocessingMotionestimation();
 	void OnFrameprocessingMotioncompensation();
-	void OnFrameprocessingSimpledifference(CDib dib);
+	void OnFrameprocessingSimpledifference();
 };

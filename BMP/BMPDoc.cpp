@@ -173,9 +173,10 @@ BOOL CBMPDoc::OnSaveDocument(LPCTSTR lpszPathName)
 }
 
 
-CDib *CBMPDoc::OnColormodelRgb2yuv(CDib dib)
+CDib *CBMPDoc::OnColormodelRgb2yuv()
 {
-	// TODO: Add your implementation code here.
+	CDib& dib = this->m_Dib;
+
 	if (dib.GetBitCount() == 24)
 	{
 		int w = dib.GetWidth();
@@ -226,8 +227,10 @@ CDib *CBMPDoc::OnColormodelRgb2yuv(CDib dib)
 }
 
 
-void CBMPDoc::OnFrameprocessingMotionestimation(CDib& ref)
+void CBMPDoc::OnFrameprocessingMotionestimation()
 {
+	CDib& ref = this->m_Dib;
+
 	register int i, j, k, l, m, n;
 	int w = ref.GetWidth();
 	int h = ref.GetHeight();
@@ -381,13 +384,14 @@ void CBMPDoc::OnFrameprocessingMotioncompensation()
 }
 
 
-void CBMPDoc::OnFrameprocessingSimpledifference(CDib ref)
+void CBMPDoc::OnFrameprocessingSimpledifference()
 {
+	CDib& ref = this->m_Dib;
+
 	register int i, j, k, l, m, n;
 	int w = ref.GetWidth();
 	int h = ref.GetHeight();
 
-	// 1. 첫번째 프레임은 열려있는 상태, 두번째 프레임을 열고 화면에 출력한다.
 	if (ref.GetBitCount() == 24)
 	{
 		CDib cur;
@@ -405,25 +409,19 @@ void CBMPDoc::OnFrameprocessingSimpledifference(CDib ref)
 		AfxNewImage(cur);
 
 		DOUBLE** residual = Alloc2DMem(h, w);
-
-		// 3. RGB 포맷의 두 프레임을 YUV 포맷으로 변환한다. 
 		DOUBLE*** refYUV = RGB2YUV(ref);
 		DOUBLE*** curYUV = RGB2YUV(cur);
 
-		// 4. Motion Estimation 처리 시작
-		for (i = 0; i < h; i++) // 프레임의 해상도 h, w 에 대응하는 2중 루프부터 시작한다.
+		for (i = 0; i < h; i++)
 		{
 			for (j = 0; j < w; j++)
 			{
-				// SAD 가 최소가 되는 최적 위치와 매크로 블록 사이의 잔차 = Residual (Absolute Difference) 을 구한다.
 				DOUBLE rv = refYUV[0][i][j];
 				DOUBLE cv = curYUV[0][i][j];
 				residual[i][j] = abs(rv - cv);
 			}
 		}
-		// Motion Estimation 종료
 
-		// 5. 실수 범위의 잔차 = Residual 을 정수 범위로 스케일링하고 ReferenceFrame 의 RGB 버퍼에 복사한다.
 		CDib cur_res;
 		cur_res.Copy(&cur);
 
@@ -439,7 +437,6 @@ void CBMPDoc::OnFrameprocessingSimpledifference(CDib ref)
 		}
 		AfxNewImage(cur_res);
 
-		// 동적할당한 모든 버퍼를 해제한다.
 		delete[] residual;
 		delete[] refYUV;
 		delete[] curYUV;
